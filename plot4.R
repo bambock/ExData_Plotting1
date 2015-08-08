@@ -13,6 +13,7 @@ class(all_hpc$Time) = c('POSIXt')
 feb_hpc<-dplyr::filter(all_hpc, (all_hpc$Date == "2007/2/1" | all_hpc$Date == "2007/2/2"))
 
 # set up the basic graphic device criteria for the plot
+# at 480x480 the graphics were difficult to interpret, so I modified the size to 600x600.
 png("figure/plot4.png", height=600, width=600, res=100)
 par(cex.axis=0.8, cex.lab=0.8, mfrow=c(2,2))
 
