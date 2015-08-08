@@ -1,25 +1,21 @@
 # Ethan Bambock
-# exdata-014 - Project 1: plot1.R
-# 2015/05/04
+# exdata-031 - Project 1: plot1.R
+# 2015/08/07
 
-library(lubridate)
 library(dplyr)
 
-# read data from file
-data<-read.csv("feb_power.txt", header=TRUE, sep=";")
+# read in all data from source file
+all_hpc<-read.csv("household_power_consumption.txt", sep=";", as.is=TRUE, skipNul=TRUE)
+all_hpc$Date<-as.Date(all_hpc$Date, format="%d/%m/%Y")
+class(all_hpc$Time) = c('POSIXt')
 
-# move to a dplyr table
-power<-tbl_df(data)
+# parse out the february data for graphing
+feb_hpc<-dplyr::filter(all_hpc, (all_hpc$Date == "2007/2/1" | all_hpc$Date == "2007/2/2"))
 
-# modify the date stamp
-power<-power%>%mutate(NewDate=dmy(Date))
+# set up the basic graphic device criteria for the plot
+png("figure/plot1.png", height=480, width=480, res=100)
+par(cex.axis=0.8, cex.lab=0.8)
 
-
-# set some standard settings for the plot
-png("figure/Plot1.png", height=480, width=480, res=120)
-
-# set some standard plot settings
-par(cex.axis=0.6, cex.lab=0.6)
-
-hist(power$Global_active_power, col="red", main="Global Active Power", xlab="Global Active Power (kilowatts)")
+# add the plots and annotations and write the file to disk with dev.off.
+hist(as.numeric(feb_hpc$Global_active_power), col="red", main="Global Active Power", xlab="Global Active Power (kilowatts)", ylim=c(0,1200))
 dev.off()

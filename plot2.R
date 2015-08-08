@@ -1,24 +1,28 @@
 # Ethan Bambock
-# exdata-014 - Project 1: plot2.R
-# 2015/05/04
+# exdata-031 - Project 1: plot2.R
+# 2015/08/07
 
-library(lubridate)
 library(dplyr)
 
-# read data from file
-data<-read.csv("feb_power.txt", header=TRUE, sep=";")
+# read in all data from source file
+all_hpc<-read.csv("household_power_consumption.txt", sep=";", as.is=TRUE, skipNul=TRUE)
+all_hpc$Date<-as.Date(all_hpc$Date, format="%d/%m/%Y")
+class(all_hpc$Time) = c('POSIXt')
 
-# move to a dplyr table
-power<-tbl_df(data)
+# parse out the february data for graphing
+feb_hpc<-dplyr::filter(all_hpc, (all_hpc$Date == "2007/2/1" | all_hpc$Date == "2007/2/2"))
 
-# add day of week column
-power<-power%>%mutate(NewDate=dmy(Date))
-power<-power%>%mutate(Weekday=wday(Date, label=TRUE))
+# set up the basic graphic device criteria for the plot
+png("figure/plot2.png", height=480, width=480, res=100)
+par(cex.axis=0.8, cex.lab=0.8)
 
-# set some standard settings for the plot
-png("figure/Plot2.png", height=480, width=480, res=120)
-
-# set some standard plot settings
-par(cex.axis=0.6, cex.lab=0.6)
-plot(as.POSIXct(paste(power$NewDate, power$Time)), power$Global_active_power, xlab="", ylab="Global Active Power (kilowatts)", type="l")
+# add the plots and annotations and write the file to disk with dev.off.
+plot(as.POSIXct(paste(feb_hpc$Date, feb_hpc$Time)), as.numeric(feb_hpc$Global_active_power), xlab="", ylab="Global Active Power (kilowatt)", type="l")
 dev.off()
+
+
+
+
+
+
+
